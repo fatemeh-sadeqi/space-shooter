@@ -1,5 +1,19 @@
 import pygame
+import random
 pygame.init()
+
+class Enemy:
+    def __init__(self):
+        self.x = random.randint(0, 760)
+        self.y = -40
+        self.speed = 2
+
+
+    def update(self):
+        self.y += self.speed
+
+    def draw(self, screen):
+        pygame.draw.rect(screen,(255, 0, 0), (self.x, self.y, 40, 30))
 
 class Bullet:
     def __init__(self, x, y):
@@ -23,6 +37,7 @@ ship_speed = 5
 clock = pygame.time.Clock()
 
 bullets = []
+enemies = []
 
 while running:
     for event in pygame.event.get():
@@ -44,19 +59,25 @@ while running:
     if ship_x > 750:
         ship_x = 750
 
+    if random.randint(1, 60) == 1:
+        enemies.append(Enemy())
+
     screen.fill((0, 0, 20))
     pygame.draw.rect(screen, (255, 255, 255), (ship_x, ship_y, 50, 30))
 
     for bullet in bullets[:]:
-            bullet.update()
-            bullet.draw(screen)
-            if bullet.y < 0:
-                bullets.remove(bullet)
+        bullet.update()
+        bullet.draw(screen)
+        if bullet.y < 0:
+            bullets.remove(bullet)
+
+    for enemy in enemies[:]:
+        enemy.update()
+        enemy.draw(screen)
+        if enemy.y > 600:
+            enemies.remove(enemy)
 
     pygame.display.flip()
     clock.tick(60)
-
-    
-
 
 pygame.quit()
