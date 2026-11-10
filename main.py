@@ -39,6 +39,8 @@ clock = pygame.time.Clock()
 bullets = []
 enemies = []
 
+score = 0
+ 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -76,6 +78,18 @@ while running:
         enemy.draw(screen)
         if enemy.y > 600:
             enemies.remove(enemy)
+
+    for bullet in bullets[:]:
+        for enemy in enemies[:]:
+            bullet_rect = pygame.Rect(bullet.x, bullet.y, 4, 12)
+            enemy_rect = pygame.Rect(enemy.x, enemy.y, 40, 30)
+
+            if bullet_rect.colliderect(enemy_rect):
+                bullets.remove(bullet)
+                enemies.remove(enemy)
+                score += 10
+                print(score)
+                break
 
     pygame.display.flip()
     clock.tick(60)
