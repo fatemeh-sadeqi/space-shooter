@@ -40,6 +40,8 @@ bullets = []
 enemies = []
 
 score = 0
+lives = 3
+font = pygame.font.Font(None, 36)
  
 while running:
     for event in pygame.event.get():
@@ -73,10 +75,20 @@ while running:
         if bullet.y < 0:
             bullets.remove(bullet)
 
+    ship_rect = pygame.Rect(ship_x, ship_y, 50, 30)
+
     for enemy in enemies[:]:
         enemy.update()
         enemy.draw(screen)
-        if enemy.y > 600:
+
+        enemy_rect = pygame.Rect(enemy.x, enemy.y, 40, 30)
+
+        if enemy_rect.colliderect(ship_rect):
+            lives -= 1
+            enemies.remove(enemy)
+
+        elif enemy.y > 600:
+            lives -= 1
             enemies.remove(enemy)
 
     for bullet in bullets[:]:
@@ -88,9 +100,14 @@ while running:
                 bullets.remove(bullet)
                 enemies.remove(enemy)
                 score += 10
-                print(score)
                 break
 
+    if lives <= 0:
+        running = False
+
+    text = font.render(f"Score: {score} Lives: {lives}", True, (255, 255, 255))
+    screen.blit(text, (10, 10))
+    
     pygame.display.flip()
     clock.tick(60)
 
