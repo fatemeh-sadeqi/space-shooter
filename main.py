@@ -13,7 +13,7 @@ class Enemy:
         self.y += self.speed
 
     def draw(self, screen):
-        pygame.draw.rect(screen,(255, 0, 0), (self.x, self.y, 40, 30))
+        screen.blit(enemy_img, (self.x, self.y))
 
 class Bullet:
     def __init__(self, x, y):
@@ -25,12 +25,17 @@ class Bullet:
         self.y -= self.speed
 
     def draw(self, screen):
-        pygame.draw.rect(screen, (255, 255, 0), (self.x, self.y, 4, 12))
+        screen.blit(bullet_img, (self.x, self.y))
 
 screen = pygame.display.set_mode ((800, 600))
 pygame.display.set_caption("Space Shooter")
+ship_img = pygame.image.load("images/ship.png").convert_alpha()
+ship_img = pygame.transform.scale(ship_img, (50, 30))
+enemy_img = pygame.image.load("images/enemy.png").convert_alpha()
+enemy_img = pygame.transform.scale(enemy_img, (40, 30))
+bullet_img = pygame.image.load("images/bullet.png").convert_alpha()
+bullet_img = pygame.transform.scale(bullet_img, (10, 24))
 running = True
-
 
 ship_x = 375
 ship_y = 520
@@ -53,7 +58,7 @@ while running:
             running = False
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            bullets.append(Bullet(ship_x + 25, ship_y))
+            bullets.append(Bullet(ship_x + 20, ship_y))
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
@@ -67,11 +72,11 @@ while running:
     if ship_x > 750:
         ship_x = 750
 
-    if random.randint(1, 60) == 1:
+    if random.randint(1, 60) == 1 and not game_over:
         enemies.append(Enemy())
 
     screen.fill((0, 0, 20))
-    pygame.draw.rect(screen, (255, 255, 255), (ship_x, ship_y, 50, 30))
+    screen.blit(ship_img, (ship_x, ship_y))
 
     for bullet in bullets[:]:
         bullet.update()
@@ -97,7 +102,7 @@ while running:
 
     for bullet in bullets[:]:
         for enemy in enemies[:]:
-            bullet_rect = pygame.Rect(bullet.x, bullet.y, 4, 12)
+            bullet_rect = pygame.Rect(bullet.x, bullet.y, 10, 24)
             enemy_rect = pygame.Rect(enemy.x, enemy.y, 40, 30)
 
             if bullet_rect.colliderect(enemy_rect):
@@ -107,6 +112,7 @@ while running:
                 break
 
     if lives <= 0:
+        lives = 0
         game_over = True
 
     text = font.render(f"Score: {score} Lives: {lives}", True, (255, 255, 255))
