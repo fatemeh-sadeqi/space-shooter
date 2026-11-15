@@ -31,6 +31,7 @@ screen = pygame.display.set_mode ((800, 600))
 pygame.display.set_caption("Space Shooter")
 running = True
 
+
 ship_x = 375
 ship_y = 520
 ship_speed = 5
@@ -41,7 +42,10 @@ enemies = []
 
 score = 0
 lives = 3
+game_over = False
 font = pygame.font.Font(None, 36)
+big_font = pygame.font.Font(None, 72)
+
  
 while running:
     for event in pygame.event.get():
@@ -103,10 +107,14 @@ while running:
                 break
 
     if lives <= 0:
-        running = False
+        game_over = True
 
     text = font.render(f"Score: {score} Lives: {lives}", True, (255, 255, 255))
     screen.blit(text, (10, 10))
+
+    if game_over:
+        over_text = big_font.render("GAME OVER", True, (255, 255, 255))
+        screen.blit(over_text, (250, 250))
     
     pygame.display.flip()
     clock.tick(60)
